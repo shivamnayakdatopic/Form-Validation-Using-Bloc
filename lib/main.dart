@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home:  BlocProvider(
-        create: (context) => SignupBlocBloc(),
-        child: const SignUp(),
+        create: (context) => SignupBloc(),
+        child:  SignUp(),
       ),
     );
   }

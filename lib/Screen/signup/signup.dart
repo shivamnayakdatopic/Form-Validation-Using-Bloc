@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validation/Screen/signup/signup_bloc/signup_bloc_bloc.dart';
 
 class SignUp extends StatelessWidget {
-  const SignUp({super.key});
+  SignUp({super.key});
+
+  TextEditingController emailValue = TextEditingController();
+  TextEditingController passwordValue = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class SignUp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              BlocBuilder<SignupBlocBloc, SignupBlocState>(
+              BlocBuilder<SignupBloc, SignupBlocState>(
                 builder: (context, state) {
                   if (state is SignupError) {
                     return Text(
@@ -33,26 +36,51 @@ class SignUp extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20.0),
-              const TextField(
-                // onChanged: (value) {
-                //   BlocProvider.of<SignupBlocBloc>(context).add(OnChangeField(email,password));
-                // },
-                decoration: InputDecoration(
+              TextField(
+                onChanged: (value) {
+                  BlocProvider.of<SignupBloc>(context)
+                      .add(OnChangeField(emailValue.text, passwordValue.text));
+                },
+                controller: emailValue,
+                decoration: const InputDecoration(
                   labelText: 'Email',
                 ),
               ),
               const SizedBox(height: 20.0),
-              const TextField(
+              TextField(
+                onChanged: (value) {
+                  BlocProvider.of<SignupBloc>(context)
+                      .add(OnChangeField(emailValue.text, passwordValue.text));
+                },
+                controller: passwordValue,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Password',
                 ),
               ),
               const SizedBox(height: 20.0),
-              ElevatedButton(
-                child: Text('Sign Up'),
-                onPressed: () {
-                  // Perform signup logic here
+              BlocBuilder<SignupBloc, SignupBlocState>(
+                builder: (context, state) {
+                  if (state is SignupLoading) {
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            (state is SignupValid) ? Colors.blue : Colors.grey),
+                    child: const Text(
+                      'Sign Up',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      if (state is SignupValid) {
+                        BlocProvider.of<SignupBloc>(context).add(
+                            SignUpButton(emailValue.text, passwordValue.text));
+                      }
+                    },
+                  );
                 },
               ),
             ],
